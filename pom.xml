@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.augustcellars.cose</groupId>
+    <groupId>org.cose</groupId>
     <artifactId>cose-java</artifactId>
     <version>1.1.1-SNAPSHOT</version>
 
@@ -80,7 +80,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.12cos</version>
+                <version>0.8.12</version>
                 <executions>
                     <execution>
                         <goals>
