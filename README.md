@@ -9,18 +9,19 @@ In addition to the core document the following have also become RFCs:
 
 The project is implemented using Bouncy Castle for the crypto libraries and uses the PeterO CBOR library for its CBOR implementation.
 
-There is a partial implementation of EdDSA using the library found at et.i2p.crypto which can be installed as a Cryptographic Provider.  While this is expected to be released soon, it is currently only available on the EdDSA branch.
+NOTE: the initial project did not use Bouncy Castle for Edwards Curves, but the net.i2p.crypto:eddsa. For compliance reason,
+this version fully relies on Bouncy Castle.
 
 ## How to Install
 
-Starting with version 0.9.0, the Java imlemention is available as an [artifact](https://search.maven.org/#search%7Cga%7C1%7Ccose-java) in the Central Repository.
+Starting with version 0.9.0, the Java imlementation is available as an [artifact](https://search.maven.org/#search%7Cga%7C1%7Ccose-java) in the Central Repository.
 To add this library to a Maven project, add the following to the `dependencies` section in your pom.xml file:
 
 ```xml
 <dependency>
   <groupId>com.augustcellars.cose</groupId>
   <artifactId>cose-java</artifactId>
-  <version>0.9.7</version>
+  <version>1.1.1</version>
 </dependency>
 ```
 
@@ -40,17 +41,18 @@ import java.security.Security;
 import java.security.Provider;
 
 public class InstallBouncyCastle {
-   private static final Provider PROVIDER;
-   
-   public static void installProvider() throws Exception {
-       if (PROVIDER != null) return;
-       PROVIDER = new BouncyCastleProvider();
-       Security.insertProviderAt(PROVIDER, 1);
-   }
+    private static final Provider PROVIDER;
 
-   public static void removeProvider() throws Exception {
-       Security.removeProvider(PROVIDER.getName());
-       PROVIDER = null;
+    public static void installProvider() throws Exception {
+        if (PROVIDER != null) return;
+        PROVIDER = new BouncyCastleProvider();
+        Security.insertProviderAt(PROVIDER, 1);
+    }
+
+    public static void removeProvider() throws Exception {
+        Security.removeProvider(PROVIDER.getName());
+        PROVIDER = null;
+    }
 }
 ```
 
@@ -64,6 +66,5 @@ Go ahead, file issues, make pull requests.  There is an automated build process 
 
 ## Building
 
-Currently setup to build in the NetBeans IDE.  Automated checking is performed using the [COSE Examples](https://github.com/cose-wg/Examples) as part of the suite.
-
-The examples are located by the following method. 1) If 'c:\\Projects\\cose\\" exists then it uses that as the directory to look in for the examples. 2) It expects that the examples are in the same directory as the pom.xml file.
+Dependencies:
+* [COSE Examples](https://github.com/cose-wg/Examples): the Examples should be in the same parent directory as the pom.xml file.
