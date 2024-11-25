@@ -1,4 +1,4 @@
-# COSE-JAVA Implementation [![Build Status](https://travis-ci.org/cose-wg/COSE-JAVA.svg?branch=master)](https://travis-ci.org/cose-wg/COSE-JAVA) [![Maven Central](https://img.shields.io/maven-central/v/com.augustcellars.cose/cose-java.svg?style=plastic)](https://search.maven.org/#search%7Cga%7C1%7Ccose-java)
+# COSE-JAVA Implementation [![Build Status](https://travis-ci.org/org.cose.java/cose-java.svg?branch=master)](https://travis-ci.org/org.cose.java) [![Maven Central](https://img.shields.io/maven-central/v/org.cose.java/cose-java.svg?style=plastic)](https://search.maven.org/#search%7Cga%7C1%7Corg.cose.java)
 
 This project is a JAVA implementation of the IETF CBOR Encoded Message Syntax (COSE).
 COSE has reached RFC status and is now available at [RFC 8152](https://tools.ietf.org/html/rfc8152).
@@ -7,25 +7,27 @@ In addition to the core document the following have also become RFCs:
 
 * [RFC 8230](https://tools.ietf.org/html/rfc8230) How to use RSA algorithms with COSE. (Not currently supported)
 
-The project is implemented using Bouncy Castle for the crypto libraries and uses the PeterO CBOR library for its CBOR implementation.
+At the moment, this layer is not compliant with:
+* [RFC 9052](https://www.rfc-editor.org/info/rfc9052)
+* [RFC 9053](https://www.rfc-editor.org/info/rfc9053)
+* [Draft COSE Countersignatures (currently draft 10)](https://www.ietf.org/archive/id/draft-ietf-cose-countersign-10.html)
 
-NOTE: the initial project did not use Bouncy Castle for Edwards Curves, but the net.i2p.crypto:eddsa. For compliance reason,
-this version fully relies on Bouncy Castle.
+The project is implemented using Bouncy Castle for the crypto libraries and uses the PeterO CBOR library for its CBOR implementation.
 
 ## How to Install
 
-Starting with version 0.9.0, the Java imlementation is available as an [artifact](https://search.maven.org/#search%7Cga%7C1%7Ccose-java) in the Central Repository.
+Starting with version 0.9.0, the Java implementation is available as an [artifact](https://search.maven.org/#search%7Cga%7C1%7Ccose-java) in the Central Repository.
 To add this library to a Maven project, add the following to the `dependencies` section in your pom.xml file:
 
 ```xml
 <dependency>
-  <groupId>com.augustcellars.cose</groupId>
+  <groupId>org.cose.java</groupId>
   <artifactId>cose-java</artifactId>
-  <version>1.1.1</version>
+  <version>1.1.1-SNAPSHOT</version>
 </dependency>
 ```
 
-In other Java-based environments, the library can be referred to by its group ID ('com.augustcellars.cose'), artifact ID ('cose-java'), and version, as given above.
+In other Java-based environments, the library can be referred to by its group ID ('org.cose.java'), artifact ID ('cose-java'), and version, as given above.
 
 ## Cryptographic Providers
 

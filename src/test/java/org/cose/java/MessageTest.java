@@ -6,6 +6,7 @@
 package org.cose.java;
 
 import com.upokecenter.cbor.CBORObject;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author jimsch
  */
+@Slf4j
 public class MessageTest extends TestBase {
     byte[] rgbKey128 = {'a', 'b', 'c', 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
     byte[] rgbContent = new byte[]{1,2,3,4,5,6,7};
@@ -60,7 +62,7 @@ public class MessageTest extends TestBase {
      */
     @Test
     public void testHasContent() {
-        System.out.println("HasContent");
+        log.debug("HasContent");
         Message instance = new Encrypt0Message();
         boolean expResult = false;
         boolean result = instance.HasContent();
@@ -76,7 +78,7 @@ public class MessageTest extends TestBase {
      */
     @Test
     public void testSetContent_byteArr() {
-        System.out.println("SetContent");
+        log.debug("SetContent");
         byte[] rgbData = new byte[]{1,2,3,4,5,6,7};
         Message instance = new Encrypt0Message();
         instance.SetContent(rgbData);
@@ -90,7 +92,7 @@ public class MessageTest extends TestBase {
      */
     @Test
     public void testSetContent_String() {
-        System.out.println("SetContent");
+        log.debug("SetContent");
         String strData = "12345678";
         byte[] rgbData = new byte[]{49, 50, 51, 52, 53, 54, 55, 56};
         

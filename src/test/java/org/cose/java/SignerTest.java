@@ -6,6 +6,7 @@
 package org.cose.java;
 
 import com.upokecenter.cbor.CBORObject;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -14,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author jimsch
  */
+@Slf4j
 public class SignerTest extends TestBase {
 
     /**
@@ -22,7 +24,7 @@ public class SignerTest extends TestBase {
     @Disabled
     @Test
     public void testSetKey() throws CoseException {
-        System.out.println("setKey");
+        log.debug("setKey");
         OneKey cnKey = null;
         Signer instance = new Signer();
         instance.setKey(cnKey);

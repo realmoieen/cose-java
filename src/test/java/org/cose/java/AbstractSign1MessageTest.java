@@ -6,6 +6,7 @@
 package org.cose.java;
 
 import com.upokecenter.cbor.CBORObject;
+import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.asn1.x9.X9ECParameters;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.generators.ECKeyPairGenerator;
@@ -22,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * @author jimsch
  */
+@Slf4j
 public abstract class AbstractSign1MessageTest extends TestBase {
 
     static byte[] rgbContent = {'T', 'h', 'i', 's', ' ', 'i', 's', ' ', 's', 'o', 'm', 'e', ' ', 'c', 'o', 'n', 't', 'e', 'n', 't'};
@@ -168,7 +170,7 @@ public abstract class AbstractSign1MessageTest extends TestBase {
      */
     @Test
     public void testRoundTrip() throws Exception {
-        System.out.println("Round Trip");
+        log.debug("Round Trip");
         Sign1Message msg = new Sign1Message();
         msg.addAttribute(HeaderKeys.Algorithm, signingAlgorithm, Attribute.PROTECTED);
         msg.SetContent(rgbContent);
@@ -186,7 +188,7 @@ public abstract class AbstractSign1MessageTest extends TestBase {
      */
     @Test
     public void testRoundTripMixed() throws Exception {
-        System.out.println("Round Trip");
+        log.debug("Round Trip");
         Sign1Message msg = new Sign1Message();
         msg.addAttribute(HeaderKeys.Algorithm, signingAlgorithm, Attribute.PROTECTED);
         msg.SetContent(rgbContent);

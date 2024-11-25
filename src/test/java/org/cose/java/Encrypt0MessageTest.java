@@ -6,6 +6,7 @@
 package org.cose.java;
 
 import com.upokecenter.cbor.CBORObject;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -13,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author jimsch
  */
+@Slf4j
 public class Encrypt0MessageTest extends TestBase {
     byte[] rgbKey128 = {'a', 'b', 'c', 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
     byte[] rgbKey256 = {'a', 'b', 'c', 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32};
@@ -44,7 +46,7 @@ public class Encrypt0MessageTest extends TestBase {
      */
     @Test
     public void testRoundTrip() throws Exception {
-        System.out.println("Round Trip");
+        log.debug("Round Trip");
         Encrypt0Message msg = new Encrypt0Message();
         msg.addAttribute(HeaderKeys.Algorithm, AlgorithmID.AES_GCM_128.AsCBOR(), Attribute.PROTECTED);
         msg.addAttribute(HeaderKeys.IV, CBORObject.FromObject(rgbIV96), Attribute.PROTECTED);

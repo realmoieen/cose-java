@@ -9,6 +9,7 @@ import com.upokecenter.cbor.*;
 
 import java.util.List;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -17,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author jimsch
  */
+@Slf4j
 public class EncryptMessageTest extends TestBase {
     static byte[] rgbKey128 = {'a', 'b', 'c', 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
     static byte[] rgbKey256 = {'a', 'b', 'c', 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32};
@@ -43,7 +45,7 @@ public class EncryptMessageTest extends TestBase {
      */
     @Test
     public void testRoundTrip() throws Exception {
-        System.out.println("Round Trip");
+        log.debug("Round Trip");
         EncryptMessage msg = new EncryptMessage();
         msg.addAttribute(HeaderKeys.Algorithm, AlgorithmID.AES_GCM_128.AsCBOR(), Attribute.PROTECTED);
         msg.addAttribute(HeaderKeys.IV, CBORObject.FromObject(rgbIV96), Attribute.PROTECTED);

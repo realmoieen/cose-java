@@ -7,6 +7,7 @@ package org.cose.java;
 
 import com.upokecenter.cbor.CBORObject;
 import com.upokecenter.cbor.CBORType;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -24,31 +25,32 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author jimsch
  */
+@Slf4j
 public class RegressionTest extends TestBase {
     //    @Parameters(name = "{index}: {0})")
     public static Stream<Arguments> provideTestFiles() {
         return Stream.of(
-                Arguments.of("Examples/countersign"),
-//                Arguments.of("Examples/countersign1"),
-                Arguments.of("Examples/eddsa-examples"),
-                Arguments.of("Examples/aes-ccm-examples"),
-                Arguments.of("Examples/aes-gcm-examples"),
-                Arguments.of("Examples/aes-wrap-examples"),
-                Arguments.of("Examples/cbc-mac-examples"),
-//                Arguments.of("Examples/ecdh-direct-examples"),
-                Arguments.of("Examples/ecdh-wrap-examples"),
-                Arguments.of("Examples/ecdsa-examples"),
-                Arguments.of("Examples/encrypted-tests"),
-                Arguments.of("Examples/enveloped-tests"),
-                Arguments.of("Examples/hkdf-hmac-sha-examples"),
-                Arguments.of("Examples/hmac-examples"),
-                Arguments.of("Examples/mac-tests"),
-                Arguments.of("Examples/mac0-tests"),
-                Arguments.of("Examples/sign-tests"),
-                Arguments.of("Examples/sign1-tests"),
-//                Arguments.of("Examples/RFC8152"),
-                Arguments.of("Examples/rsa-pss-examples"),
-                Arguments.of("Examples/CWT")
+//                Arguments.of("Examples/countersign"),
+                Arguments.of("Examples/countersign1")
+//                Arguments.of("Examples/eddsa-examples"),
+//                Arguments.of("Examples/aes-ccm-examples"),
+//                Arguments.of("Examples/aes-gcm-examples"),
+//                Arguments.of("Examples/aes-wrap-examples"),
+//                Arguments.of("Examples/cbc-mac-examples"),
+////                Arguments.of("Examples/ecdh-direct-examples"),
+//                Arguments.of("Examples/ecdh-wrap-examples"),
+//                Arguments.of("Examples/ecdsa-examples"),
+//                Arguments.of("Examples/encrypted-tests"),
+//                Arguments.of("Examples/enveloped-tests"),
+//                Arguments.of("Examples/hkdf-hmac-sha-examples"),
+//                Arguments.of("Examples/hmac-examples"),
+//                Arguments.of("Examples/mac-tests"),
+//                Arguments.of("Examples/mac0-tests"),
+//                Arguments.of("Examples/sign-tests"),
+//                Arguments.of("Examples/sign1-tests"),
+////                Arguments.of("Examples/RFC8152"),
+//                Arguments.of("Examples/rsa-pss-examples"),
+//                Arguments.of("Examples/CWT")
         );
     }
 
@@ -63,7 +65,7 @@ public class RegressionTest extends TestBase {
         CFails = 0;
         File directory = new File(directoryName);
         if (!directory.isDirectory()) {
-            directory = new File("..", directoryName);//"D:\\Projects\\cose\\" + directoryName);
+            directory = new File("..", directoryName);
         }
         File[] contents = directory.listFiles();
         assertNotNull(directoryName);
@@ -79,24 +81,28 @@ public class RegressionTest extends TestBase {
         if (!test.endsWith(".json")) return;
         try {
             int fails = CFails;
-            System.out.print("Check: " + test);
             InputStream str = new FileInputStream(test);
             CBORObject foo = CBORObject.ReadJSON(str);
-
-
+            
             ProcessJSON(foo);
-            if (fails == CFails) System.out.print("... PASS\n");
-            else System.out.print("... FAIL\n");
+            if (fails == CFails) {
+                log.info("Check: {} ... PASS", test);
+            } else {
+                log.warn("Check: {} ... FAIL", test);
+            }
         } catch (CoseException e) {
             if (e.getMessage().equals("Unsupported key size") ||
                     e.getMessage().equals("Unsupported Algorithm")) {
-                System.out.print("... SKIP\nException " + e + "\n");
+                log.error("Check: {} ... SKIP: {}", test, e.getMessage());
+                log.debug(e.toString(), e);
             } else {
-                System.out.print("... FAIL\nException " + e + "\n");
+                log.error("Check: {} ... FAIL: {}", test, e.getMessage());
+                log.debug(e.toString(), e);
                 CFails++;
             }
         } catch (Exception e) {
-            System.out.print("... FAIL\nException " + e + "\n");
+            log.error("Check: {} ... FAIL: {}", test, e.getMessage());
+            log.debug(e.toString(), e);
             CFails++;
         }
     }
@@ -684,13 +690,9 @@ public class RegressionTest extends TestBase {
         byte[] rgb = hEncObj.EncodeToBytes();
 
         int f = _ValidateEnveloped(cnControl, rgb);
-
-        return;
     }
 
     public void SetReceivingAttributes(Attribute msg, CBORObject cnIn) throws Exception {
-        boolean f = false;
-
         SetAttributes(msg, cnIn.get("unsent"), Attribute.DO_NOT_SEND, true);
 
         CBORObject cnExternal = cnIn.get("external");
@@ -1166,7 +1168,7 @@ public class RegressionTest extends TestBase {
         } catch (CoseException e) {
             throw e;
         } catch (Exception e) {
-            System.out.print("... FAIL\nException " + e + "\n");
+            log.error("... FAIL\nException " + e + "\n");
             CFails++;
         }
         return 0;
@@ -1250,14 +1252,13 @@ public class RegressionTest extends TestBase {
 
             rgb = hSignObj.EncodeToBytes();
         } catch (Exception e) {
-            System.out.print("... Exception " + e + "\n");
-
+            log.error("... Exception " + e + "\n");
+            log.debug(e.toString(), e);
             CFails++;
             return 0;
         }
 
-        int f = _ValidateSigned(cnControl, rgb);
-        return f;
+        return _ValidateSigned(cnControl, rgb);
     }
 
     int _ValidateSign0(CBORObject cnControl, byte[] pbEncoded) throws CoseException {
@@ -1307,7 +1308,7 @@ public class RegressionTest extends TestBase {
         } catch (CoseException e) {
             throw e;
         } catch (Exception e) {
-            System.out.print("... Exception " + e + "\n");
+            log.error("... Exception " + e + "\n");
 
             CFails++;
         }

@@ -6,6 +6,7 @@
 package org.cose.java;
 
 import com.upokecenter.cbor.CBORObject;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -13,8 +14,9 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author jimsch
  */
+@Slf4j
 public class MACMessageTest extends TestBase {
-    static byte[] rgbKey128 = {'a', 'b', 'c', 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
+    //static byte[] rgbKey128 = {'a', 'b', 'c', 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
     static byte[] rgbKey256 = {'a', 'b', 'c', 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32};
     static byte[] rgbContent = {'T', 'h', 'i', 's', ' ', 'i', 's', ' ', 's', 'o', 'm', 'e', ' ', 'c', 'o', 'n', 't', 'e', 'n', 't'};
 
@@ -53,7 +55,7 @@ public class MACMessageTest extends TestBase {
      */
     @Test
     public void testAddRecipient() throws CoseException {
-        System.out.println("addRecipient");
+        log.debug("addRecipient");
         Recipient recipient = null;
         MACMessage instance = new MACMessage();
 
@@ -67,7 +69,7 @@ public class MACMessageTest extends TestBase {
      */
     @Test
     public void testGetRecipient_1args_1() throws CoseException {
-        System.out.println("getRecipient");
+        log.debug("getRecipient");
         int iRecipient = 0;
         MACMessage instance = new MACMessage();
         Recipient expResult = new Recipient();
@@ -92,7 +94,7 @@ public class MACMessageTest extends TestBase {
      */
     @Test
     public void testRoundTrip() throws Exception {
-        System.out.println("Round Trip");
+        log.debug("Round Trip");
         MACMessage msg = new MACMessage();
         msg.addAttribute(HeaderKeys.Algorithm, AlgorithmID.HMAC_SHA_256.AsCBOR(), Attribute.PROTECTED);
         msg.SetContent(rgbContent);
@@ -182,7 +184,7 @@ public class MACMessageTest extends TestBase {
         CoseException thrown = assertThrows(CoseException.class,
                 () -> {
                     byte[] rgb = obj.EncodeToBytes();
-                    Message msg = Message.DecodeFromBytes(rgb, MessageTag.MAC);
+                    Message.DecodeFromBytes(rgb, MessageTag.MAC);
                 });
         assertEquals("Message is not a COSE security Message", thrown.getMessage());
     }
@@ -195,7 +197,7 @@ public class MACMessageTest extends TestBase {
         CoseException thrown = assertThrows(CoseException.class,
                 () -> {
                     byte[] rgb = obj.EncodeToBytes();
-                    Message msg = Message.DecodeFromBytes(rgb, MessageTag.MAC);
+                    Message.DecodeFromBytes(rgb, MessageTag.MAC);
                 });
         assertEquals("Invalid MAC structure", thrown.getMessage());
     }
@@ -213,7 +215,7 @@ public class MACMessageTest extends TestBase {
                 () -> {
 
                     byte[] rgb = obj.EncodeToBytes();
-                    Message msg = Message.DecodeFromBytes(rgb, MessageTag.MAC);
+                    Message.DecodeFromBytes(rgb, MessageTag.MAC);
                 });
         assertEquals("Invalid MAC structure", thrown.getMessage());
     }
@@ -231,7 +233,7 @@ public class MACMessageTest extends TestBase {
                 () -> {
 
                     byte[] rgb = obj.EncodeToBytes();
-                    Message msg = Message.DecodeFromBytes(rgb, MessageTag.MAC);
+                    Message.DecodeFromBytes(rgb, MessageTag.MAC);
                 });
         assertEquals("Invalid MAC structure", thrown.getMessage());
     }
@@ -249,7 +251,7 @@ public class MACMessageTest extends TestBase {
         CoseException thrown = assertThrows(CoseException.class,
                 () -> {
                     byte[] rgb = obj.EncodeToBytes();
-                    Message msg = Message.DecodeFromBytes(rgb, MessageTag.MAC);
+                    Message.DecodeFromBytes(rgb, MessageTag.MAC);
                 });
         assertEquals("Invalid MAC structure", thrown.getMessage());
     }
@@ -267,7 +269,7 @@ public class MACMessageTest extends TestBase {
         CoseException thrown = assertThrows(CoseException.class,
                 () -> {
                     byte[] rgb = obj.EncodeToBytes();
-                    Message msg = Message.DecodeFromBytes(rgb, MessageTag.MAC);
+                    Message.DecodeFromBytes(rgb, MessageTag.MAC);
                 });
         assertEquals("Invalid MAC structure", thrown.getMessage());
     }
@@ -285,7 +287,7 @@ public class MACMessageTest extends TestBase {
                 () -> {
 
                     byte[] rgb = obj.EncodeToBytes();
-                    Message msg = Message.DecodeFromBytes(rgb, MessageTag.MAC);
+                    Message.DecodeFromBytes(rgb, MessageTag.MAC);
                 });
         assertEquals("Invalid MAC structure", thrown.getMessage());
     }
@@ -303,7 +305,7 @@ public class MACMessageTest extends TestBase {
                 () -> {
 
                     byte[] rgb = obj.EncodeToBytes();
-                    Message msg = Message.DecodeFromBytes(rgb, MessageTag.MAC);
+                    Message.DecodeFromBytes(rgb, MessageTag.MAC);
                 });
         assertEquals("Invalid MAC structure", thrown.getMessage());
     }

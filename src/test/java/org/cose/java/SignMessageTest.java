@@ -6,6 +6,7 @@
 package org.cose.java;
 
 import com.upokecenter.cbor.CBORObject;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -15,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author jimsch
  */
+@Slf4j
 public class SignMessageTest extends TestBase {
 
     /**
@@ -23,7 +25,7 @@ public class SignMessageTest extends TestBase {
     @Disabled
     @Test
     public void testEncodeCBORObject() throws Exception {
-        System.out.println("EncodeCBORObject");
+        log.debug("EncodeCBORObject");
         SignMessage instance = new SignMessage();
         CBORObject expResult = null;
         CBORObject result = instance.EncodeCBORObject();
@@ -38,7 +40,7 @@ public class SignMessageTest extends TestBase {
     @Disabled
     @Test
     public void testGetSigner() {
-        System.out.println("getSigner");
+        log.debug("getSigner");
         int iSigner = 0;
         SignMessage instance = new SignMessage();
         Signer expResult = null;
@@ -65,7 +67,7 @@ public class SignMessageTest extends TestBase {
     @Disabled
     @Test
     public void testSign() throws CoseException {
-        System.out.println("sign");
+        log.debug("sign");
         SignMessage instance = new SignMessage();
         instance.sign();
         // TODO review the generated test code and remove the default call to fail.
@@ -78,7 +80,7 @@ public class SignMessageTest extends TestBase {
     @Disabled
     @Test
     public void testValidate() throws CoseException {
-        System.out.println("validate");
+        log.debug("validate");
         Signer signerToUse = null;
         SignMessage instance = new SignMessage();
         boolean expResult = false;

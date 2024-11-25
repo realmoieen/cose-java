@@ -20,6 +20,7 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.function.Consumer;
 
+import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -30,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author jimsch
  */
+@Slf4j
 public class OneKeyTest extends TestBase {
     
     /**
@@ -38,7 +40,7 @@ public class OneKeyTest extends TestBase {
     @Disabled
     @Test
     public void testAdd_KeyKeys_CBORObject() {
-        System.out.println("add");
+        log.debug("add");
         KeyKeys keyValue = null;
         CBORObject value = null;
         OneKey instance = new OneKey();
@@ -53,7 +55,7 @@ public class OneKeyTest extends TestBase {
     @Disabled
     @Test
     public void testAdd_CBORObject_CBORObject() {
-        System.out.println("add");
+        log.debug("add");
         CBORObject keyValue = null;
         CBORObject value = null;
         OneKey instance = new OneKey();
@@ -68,7 +70,7 @@ public class OneKeyTest extends TestBase {
     @Disabled
     @Test
     public void testGet_KeyKeys() {
-        System.out.println("get");
+        log.debug("get");
         KeyKeys keyValue = null;
         OneKey instance = new OneKey();
         CBORObject expResult = null;
@@ -85,7 +87,7 @@ public class OneKeyTest extends TestBase {
     @Disabled
     @Test
     public void testGet_CBORObject() throws Exception {
-        System.out.println("get");
+        log.debug("get");
         CBORObject keyValue = null;
         OneKey instance = new OneKey();
         CBORObject expResult = null;
@@ -102,7 +104,7 @@ public class OneKeyTest extends TestBase {
     @Disabled
     @Test
     public void testGenerateKey() throws Exception {
-        System.out.println("generateKey");
+        log.debug("generateKey");
         AlgorithmID algorithm = null;
         OneKey expResult = null;
         OneKey result = OneKey.generateKey(algorithm);
@@ -117,7 +119,7 @@ public class OneKeyTest extends TestBase {
     @Disabled
     @Test
     public void testPublicKey() {
-        System.out.println("PublicKey");
+        log.debug("PublicKey");
         OneKey instance = new OneKey();
         OneKey expResult = null;
         OneKey result = instance.PublicKey();
@@ -132,7 +134,7 @@ public class OneKeyTest extends TestBase {
     @Disabled
     @Test
     public void testEncodeToBytes() {
-        System.out.println("EncodeToBytes");
+        log.debug("EncodeToBytes");
         OneKey instance = new OneKey();
         byte[] expResult = null;
         byte[] result = instance.EncodeToBytes();
@@ -147,7 +149,7 @@ public class OneKeyTest extends TestBase {
     @Disabled
     @Test
     public void testAsCBOR() {
-        System.out.println("AsCBOR");
+        log.debug("AsCBOR");
         OneKey instance = new OneKey();
         CBORObject expResult = null;
         CBORObject result = instance.AsCBOR();

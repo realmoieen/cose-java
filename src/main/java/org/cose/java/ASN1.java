@@ -5,6 +5,8 @@
  */
 package org.cose.java;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -12,6 +14,7 @@ import java.util.Arrays;
  *
  * @author Jim
  */
+@Slf4j
 public class ASN1 {
     
     /**
@@ -145,7 +148,8 @@ public class ASN1 {
             return Sequence(xxx);
         }
         catch (ArrayIndexOutOfBoundsException e) {
-            System.out.print(e.toString());
+            log.error(e.getMessage());
+            log.debug(e.toString(), e);
             throw e;
         }
     }
@@ -331,7 +335,8 @@ public class ASN1 {
             return Sequence(xxx);
         }
         catch (ArrayIndexOutOfBoundsException e) {
-            System.out.print(e.toString());
+            log.error(e.getMessage());
+            log.debug(e.toString(), e);
             throw e;
         }
     }
