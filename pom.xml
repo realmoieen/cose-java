@@ -6,7 +6,7 @@
 
     <groupId>org.cose</groupId>
     <artifactId>cose-java</artifactId>
-    <version>1.1.1-SNAPSHOT</version>
+    <version>1.1.1-WALTID-SNAPSHOT</version>
 
     <name>Fork of COSE-JAVA (com.augustcellars.cose:cose-java)</name>
     <description>A Java implementation that supports the COSE secure message specification.</description>
@@ -39,8 +39,8 @@
 
     <distributionManagement>
         <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <id>waltid-snapshots</id>
+            <url>https://maven.waltid.dev/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
 
@@ -233,4 +233,4 @@
         </dependency>
     </dependencies>
 </project>
-    
+
