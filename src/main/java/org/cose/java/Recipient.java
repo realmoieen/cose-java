@@ -423,7 +423,7 @@ public class Recipient extends Message {
         if (rgbKey.length != alg.getKeySize() / 8) throw new CoseException("Key is not the correct size");
 
         try {
-            Cipher  cipher = Cipher.getInstance("AESWrap");
+            Cipher cipher = getCryptoContext().getProvider() != null ? Cipher.getInstance("AESWrap", getCryptoContext().getProvider()) : Cipher.getInstance("AESWrap");
             cipher.init(Cipher.WRAP_MODE, new SecretKeySpec(rgbKey, "AESWrap"));
             return cipher.wrap(new SecretKeySpec(rgbContent, "AES"));
         } catch (NoSuchAlgorithmException ex) {
@@ -438,7 +438,7 @@ public class Recipient extends Message {
         if (rgbKey.length != alg.getKeySize() / 8) throw new CoseException("Key is not the correct size");
 
         try {
-            Cipher cipher = Cipher.getInstance("AESWrap");
+            Cipher cipher = getCryptoContext().getProvider() != null ? Cipher.getInstance("AESWrap", getCryptoContext().getProvider()) : Cipher.getInstance("AESWrap");
             cipher.init(Cipher.UNWRAP_MODE, new SecretKeySpec(rgbKey, "AESWrap"));
             return ((SecretKeySpec)cipher.unwrap(rgbEncrypted, "AES", Cipher.SECRET_KEY)).getEncoded();
         } catch (NoSuchAlgorithmException ex) {
@@ -455,7 +455,7 @@ public class Recipient extends Message {
     }
     
     private void ECDH_GenEphemeral() throws CoseException {
-        OneKey  secretKey = OneKey.generateKey(privateKey.get(KeyKeys.EC2_Curve));
+        OneKey  secretKey = OneKey.generateKey(privateKey.get(KeyKeys.EC2_Curve),privateKey.getCryptoContext().getProvider());
         
         // pack into EPK header
         CBORObject  epk = secretKey.PublicKey().AsCBOR();
@@ -494,7 +494,7 @@ public class Recipient extends Message {
         try {
             PublicKey pubKey = epk.AsPublicKey();
             PrivateKey privKey = key.AsPrivateKey();
-            KeyAgreement ecdh = KeyAgreement.getInstance("ECDH");
+            KeyAgreement ecdh = getCryptoContext().getProvider() != null ? KeyAgreement.getInstance("ECDH", getCryptoContext().getProvider()) : KeyAgreement.getInstance("ECDH");
             ecdh.init(privKey);
             ecdh.doPhase(pubKey, true);
             return ecdh.generateSecret();
@@ -511,7 +511,7 @@ public class Recipient extends Message {
         byte[]  rgbContext = GetKDFInput(cbitKey, alg);
  
         try {
-            Mac hmac = Mac.getInstance(HMAC_ALG_NAME);
+            Mac hmac = getCryptoContext().getProvider() != null ? Mac.getInstance(HMAC_ALG_NAME, getCryptoContext().getProvider()) : Mac.getInstance(HMAC_ALG_NAME);
             int hashLen = hmac.getMacLength();
 
             CBORObject  cnSalt = findAttribute(HeaderKeys.HKDF_Salt.AsCBOR());

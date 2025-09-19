@@ -33,23 +33,15 @@ public class OneKey {
     private PublicKey publicKey;
 
     private final KeyFactory keyFactory;
-
+    private final CryptoContext cryptoContext = new CryptoContext();
 
     public OneKey() {
-        try {
-            keyFactory = KeyFactory.getInstance("EC", "BC");
-        } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
-            throw new RuntimeException("Missing BouncyCastle provider, check your dependencies !", e);
-        }
+        keyFactory = createKeyFactory("EC");
         keyMap = CBORObject.NewMap();
     }
 
     public OneKey(CBORObject keyData) throws CoseException {
-        try {
-            keyFactory = KeyFactory.getInstance("EC", "BC");
-        } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
-            throw new RuntimeException("Missing BouncyCastle provider, check your dependencies !", e);
-        }
+        keyFactory = createKeyFactory("EC");
         if (keyData.getType() != CBORType.Map) throw new CoseException("Key data is malformed");
 
         keyMap = keyData;
@@ -64,11 +56,7 @@ public class OneKey {
      * @throws CoseException Internal COSE Exception
      */
     public OneKey(PublicKey pubKey, PrivateKey privKey) throws CoseException {
-        try {
-            keyFactory = KeyFactory.getInstance("EC", "BC");
-        } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
-            throw new RuntimeException("Missing BouncyCastle provider, check your dependencies !", e);
-        }
+        keyFactory = createKeyFactory("EC");
         keyMap = CBORObject.NewMap();
 
         if (pubKey != null) {
@@ -525,7 +513,7 @@ public class OneKey {
     }
 
     static public OneKey generateKey(AlgorithmID algorithm) throws CoseException {
-        return generateKey(algorithm, null);
+        return generateKey(algorithm, null, null);
     }
 
     /**
@@ -539,18 +527,33 @@ public class OneKey {
      * @throws CoseException
      */
     static public OneKey generateKey(AlgorithmID algorithm, String parameters) throws CoseException {
+        return generateKey(algorithm, parameters, null);
+    }
+
+    /**
+     * Generate a random key pair based on the given algorithm.
+     * Some algorithm can take a parameter. For example, the RSA_PSS family of algorithm
+     * can take the RSA key size as a parameter.
+     *
+     * @param algorithm  the algorithm to generate a key pair for
+     * @param parameters optional parameters to the key pair generator
+     * @param provider   sepcify the provider to use during key generation can be null
+     * @return the generated Key Pair
+     * @throws CoseException
+     */
+    static public OneKey generateKey(AlgorithmID algorithm, String parameters, Provider provider) throws CoseException {
         OneKey returnThis;
         switch (algorithm) {
             case ECDSA_256:
-                returnThis = generateECDSAKey("P-256", KeyKeys.EC2_P256);
+                returnThis = generateECDSAKey("P-256", KeyKeys.EC2_P256, provider);
                 break;
 
             case ECDSA_384:
-                returnThis = generateECDSAKey("P-384", KeyKeys.EC2_P384);
+                returnThis = generateECDSAKey("P-384", KeyKeys.EC2_P384, provider);
                 break;
 
             case ECDSA_512:
-                returnThis = generateECDSAKey("P-521", KeyKeys.EC2_P521);
+                returnThis = generateECDSAKey("P-521", KeyKeys.EC2_P521, provider);
                 break;
 
             case EDDSA:
@@ -567,7 +570,7 @@ public class OneKey {
                     } catch (NumberFormatException ignored) {
                     }
                 }
-                returnThis = generateRSAKey(keySize);
+                returnThis = generateRSAKey(keySize, provider);
                 break;
 
             default:
@@ -578,24 +581,24 @@ public class OneKey {
         return returnThis;
     }
 
-    static public OneKey generateKey(CBORObject curve) throws CoseException {
+    static public OneKey generateKey(CBORObject curve, Provider provider) throws CoseException {
         String curveName;
         OneKey returnThis;
 
         switch (curve.AsInt32()) {
             case 1:
                 curveName = "P-256";
-                returnThis = generateECDHKey(curveName, curve);
+                returnThis = generateECDHKey(curveName, curve, provider);
                 return returnThis;
 
             case 2:
                 curveName = "P-384";
-                returnThis = generateECDHKey(curveName, curve);
+                returnThis = generateECDHKey(curveName, curve, provider);
                 return returnThis;
 
             case 3:
                 curveName = "P-521";
-                returnThis = generateECDHKey(curveName, curve);
+                returnThis = generateECDHKey(curveName, curve, provider);
                 return returnThis;
 
             case 6:
@@ -619,7 +622,7 @@ public class OneKey {
         }
     }
 
-    static private OneKey generateECDHKey(String curveName, CBORObject curve) throws CoseException {
+    static private OneKey generateECDHKey(String curveName, CBORObject curve, Provider provider) throws CoseException {
         try {
 
             int curveSize;
@@ -645,7 +648,7 @@ public class OneKey {
             }
 
             ECGenParameterSpec paramSpec = new ECGenParameterSpec(curveName);
-            KeyPairGenerator gen = KeyPairGenerator.getInstance("EC");
+            KeyPairGenerator gen = provider != null ? KeyPairGenerator.getInstance("EC", provider) : KeyPairGenerator.getInstance("EC");
             gen.initialize(paramSpec);
 
             KeyPair keyPair = gen.genKeyPair();
@@ -687,7 +690,7 @@ public class OneKey {
         return rgb;
     }
 
-    static private OneKey generateECDSAKey(String curveName, CBORObject curve) throws CoseException {
+    static private OneKey generateECDSAKey(String curveName, CBORObject curve, Provider provider) throws CoseException {
         try {
 
             int curveSize = switch (curveName) {
@@ -707,7 +710,7 @@ public class OneKey {
             };
 
             ECGenParameterSpec paramSpec = new ECGenParameterSpec(curveName);
-            KeyPairGenerator gen = KeyPairGenerator.getInstance("EC");
+            KeyPairGenerator gen = provider != null ? KeyPairGenerator.getInstance("EC", provider) : KeyPairGenerator.getInstance("EC");
             gen.initialize(paramSpec);
 
             KeyPair keyPair = gen.genKeyPair();
@@ -877,12 +880,10 @@ public class OneKey {
                     byte[] privateKeyBytes = ASN1.EncodeOctetString(val.GetByteString());
                     byte[] pkcs8 = ASN1.EncodePKCS8(ASN1.AlgorithmIdentifier(oid, null), privateKeyBytes, null);
 
-                    KeyFactory fact = KeyFactory.getInstance(algName, "BC");
+                    KeyFactory fact = createKeyFactory(algName);
                     KeySpec keyspec = new PKCS8EncodedKeySpec(pkcs8);
 
                     privateKey = fact.generatePrivate(keyspec);
-                } catch (NoSuchAlgorithmException e) {
-                    throw new CoseException("Unsupported Algorithm", e);
                 } catch (InvalidKeySpecException e) {
                     throw new CoseException("Invalid Private Key", e);
                 }
@@ -905,11 +906,9 @@ public class OneKey {
             byte[] rgbKey = this.get(KeyKeys.OKP_X).GetByteString();
             spki = ASN1.EncodeSubjectPublicKeyInfo(ASN1.AlgorithmIdentifier(oid, null), rgbKey);
 
-            KeyFactory fact = KeyFactory.getInstance("Ed25519", "BC");//EdDSA");
+            KeyFactory fact = createKeyFactory("Ed25519");//EdDSA");
             KeySpec keyspec = new X509EncodedKeySpec(spki);
             publicKey = fact.generatePublic(keyspec);
-        } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
-            throw new CoseException("Algorithm unsupported", e);
         } catch (InvalidKeySpecException e) {
             throw new CoseException("Internal error on SPKI", e);
         }
@@ -978,10 +977,8 @@ public class OneKey {
             );
 
             try {
-                KeyFactory factory = KeyFactory.getInstance("RSA");
+                KeyFactory factory = createKeyFactory("RSA");
                 publicKey = factory.generatePublic(spec);
-            } catch (NoSuchAlgorithmException ex) {
-                throw new CoseException("No provider for algorithm", ex);
             } catch (InvalidKeySpecException ex) {
                 throw new CoseException("Invalid Public Key", ex);
             }
@@ -1065,19 +1062,17 @@ public class OneKey {
 
 
             try {
-                KeyFactory factory = KeyFactory.getInstance("RSA");
+                KeyFactory factory = createKeyFactory("RSA");
                 privateKey = factory.generatePrivate(privateKeySpec);
-            } catch (NoSuchAlgorithmException ex) {
-                throw new CoseException("No provider for algorithm", ex);
             } catch (InvalidKeySpecException ex) {
                 throw new CoseException("Invalid Private Key", ex);
             }
         }
     }
 
-    static private OneKey generateRSAKey(int keySize) throws CoseException {
+    static private OneKey generateRSAKey(int keySize, Provider provider) throws CoseException {
         try {
-            KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
+            KeyPairGenerator gen = provider != null ? KeyPairGenerator.getInstance("RSA", provider) : KeyPairGenerator.getInstance("RSA");
             gen.initialize(keySize);
 
             KeyPair keyPair = gen.genKeyPair();
@@ -1104,5 +1099,22 @@ public class OneKey {
         } catch (NoSuchAlgorithmException e) {
             throw new CoseException("No provider for algorithm", e);
         }
+    }
+
+    /**
+     * Gets the {@link CryptoContext} to set a different JCA Provider
+     */
+    public CryptoContext getCryptoContext() {
+        return cryptoContext;
+    }
+
+    private KeyFactory createKeyFactory(String algorithm) {
+        final KeyFactory keyFactory;
+        try {
+            keyFactory = cryptoContext.getProvider() != null ? KeyFactory.getInstance(algorithm, cryptoContext.getProvider()) : KeyFactory.getInstance(algorithm);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Unsupported Algorithm: " + e.getMessage(), e);
+        }
+        return keyFactory;
     }
 }

@@ -131,7 +131,7 @@ public abstract class EncryptCommon extends Message {
         }
         
         try {
-            Cipher      cipher = Cipher.getInstance(AES_CCM_SPEC);
+            Cipher cipher = getCryptoContext().getProvider() != null ? Cipher.getInstance(AES_CCM_SPEC, getCryptoContext().getProvider()) : Cipher.getInstance(AES_CCM_SPEC);
             cipher.init(Cipher.DECRYPT_MODE,
                         new SecretKeySpec(rgbKey, AES_SPEC),
                         new GCMParameterSpec(alg.getTagSize(), iv.GetByteString()));
@@ -179,7 +179,7 @@ public abstract class EncryptCommon extends Message {
         }
         
         try {
-            Cipher      cipher = Cipher.getInstance(AES_CCM_SPEC);
+            Cipher cipher = getCryptoContext().getProvider() != null ? Cipher.getInstance(AES_CCM_SPEC, getCryptoContext().getProvider()) : Cipher.getInstance(AES_CCM_SPEC);
             cipher.init(Cipher.ENCRYPT_MODE,
                         new SecretKeySpec(rgbKey, AES_SPEC),
                         new GCMParameterSpec(alg.getTagSize(), iv.GetByteString()));
@@ -218,7 +218,7 @@ public abstract class EncryptCommon extends Message {
         try {
             // create and prepare cipher
             Cipher          cipher;
-            cipher = Cipher.getInstance(AES_GCM_SPEC);
+            cipher = getCryptoContext().getProvider() != null ? Cipher.getInstance(AES_GCM_SPEC, getCryptoContext().getProvider()) : Cipher.getInstance(AES_GCM_SPEC);
             cipher.init(Cipher.DECRYPT_MODE,
                         new SecretKeySpec(rgbKey, "AES"),
                         new GCMParameterSpec(alg.getTagSize(), iv.GetByteString()));
@@ -268,7 +268,7 @@ public abstract class EncryptCommon extends Message {
         }
         
         try {
-            Cipher      cipher = Cipher.getInstance(AES_GCM_SPEC);
+            Cipher cipher = getCryptoContext().getProvider() != null ? Cipher.getInstance(AES_GCM_SPEC, getCryptoContext().getProvider()) : Cipher.getInstance(AES_GCM_SPEC);
             cipher.init(Cipher.ENCRYPT_MODE,
                         new SecretKeySpec(rgbKey, AES_SPEC),
                         new GCMParameterSpec(alg.getTagSize(), iv.GetByteString()));
