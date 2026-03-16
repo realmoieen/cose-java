@@ -75,7 +75,7 @@ public class Sign1Message extends SignCommon {
         obj.Add(externalData);
         obj.Add(rgbContent);
         
-        rgbSignature = computeSignature(obj.EncodeToBytes(), key);
+        rgbSignature = computeSignature(obj.EncodeToBytes(), key, getCryptoContext().getProvider());
         
         ProcessCounterSignatures();
     }
@@ -95,7 +95,7 @@ public class Sign1Message extends SignCommon {
         else obj.Add(CBORObject.FromObject(new byte[0]));
         obj.Add(externalData);
         obj.Add(rgbContent);
-        return validateSignature(obj.EncodeToBytes(), rgbSignature, cnKey);
+        return validateSignature(obj.EncodeToBytes(), rgbSignature, cnKey, getCryptoContext().getProvider());
     }
     
     /**

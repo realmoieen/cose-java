@@ -193,7 +193,7 @@ public class Signer extends Attribute {
 
         AlgorithmID alg = AlgorithmID.FromCBOR(findAttribute(HeaderKeys.Algorithm));
         
-        rgbSignature = SignCommon.computeSignature(alg, obj.EncodeToBytes(), cnKey);   
+        rgbSignature = SignCommon.computeSignature(alg, obj.EncodeToBytes(), cnKey, getCryptoContext().getProvider());
         
         ProcessCounterSignatures();
     }
@@ -209,7 +209,7 @@ public class Signer extends Attribute {
 
         AlgorithmID alg = AlgorithmID.FromCBOR(findAttribute(HeaderKeys.Algorithm));
 
-        return SignCommon.validateSignature(alg, obj.EncodeToBytes(), rgbSignature, cnKey);        
+        return SignCommon.validateSignature(alg, obj.EncodeToBytes(), rgbSignature, cnKey, getCryptoContext().getProvider());
     }
 
     

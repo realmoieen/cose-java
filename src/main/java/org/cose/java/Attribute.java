@@ -95,7 +95,8 @@ public class Attribute {
      * be transmitted as part of the message.
      */
     public static final int DO_NOT_SEND = 4;
-    
+
+    private final CryptoContext cryptoContext = new CryptoContext();
     /**
      * Set an attribute in the COSE object.  
      * Setting an attribute in one map will remove it from all other maps as a side effect.
@@ -367,5 +368,13 @@ public class Attribute {
     public void setExternal(byte[] rgbData) {
         if (rgbData == null) rgbData = new byte[0];
         externalData = rgbData;
-    }                
+    }
+
+    /**
+     * Gets the {@link CryptoContext} to set a different JCA Provider
+     */
+    public CryptoContext getCryptoContext() {
+        return cryptoContext;
+    }
+
 }

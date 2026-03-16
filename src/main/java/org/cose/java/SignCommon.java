@@ -5,10 +5,7 @@
  */
 package org.cose.java;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.Signature;
+import java.security.*;
 import java.util.Arrays;
 
 /**
@@ -19,14 +16,13 @@ import java.util.Arrays;
 public abstract class SignCommon extends Message {
     protected String contextString;
 
-    byte[] computeSignature(byte[] rgbToBeSigned, OneKey cnKey) throws CoseException {
+    byte[] computeSignature(byte[] rgbToBeSigned, OneKey cnKey, Provider provider) throws CoseException {
         AlgorithmID alg = AlgorithmID.FromCBOR(findAttribute(HeaderKeys.Algorithm));
-        return computeSignature(alg, rgbToBeSigned, cnKey);
+        return computeSignature(alg, rgbToBeSigned, cnKey,  provider);
     }
 
-    static byte[] computeSignature(AlgorithmID alg, byte[] rgbToBeSigned, OneKey cnKey) throws CoseException {
+    static byte[] computeSignature(AlgorithmID alg, byte[] rgbToBeSigned, OneKey cnKey, Provider provider) throws CoseException {
         String      algName = null;
-        String      provider = null;
         int         sigLen = 0;
         
         switch (alg) {
@@ -74,7 +70,7 @@ public abstract class SignCommon extends Message {
         
         byte[]      result = null;
         try {
-            Signature sig = provider == null ? Signature.getInstance(algName, "BC") :
+            Signature sig = provider == null ? Signature.getInstance(algName) :
                     Signature.getInstance(algName, provider);
             sig.initSign(privKey);
             sig.update(rgbToBeSigned);
@@ -134,14 +130,13 @@ public abstract class SignCommon extends Message {
         return concat;
     }
     
-    boolean validateSignature(byte[] rgbToBeSigned, byte[] rgbSignature, OneKey cnKey) throws CoseException {
+    boolean validateSignature(byte[] rgbToBeSigned, byte[] rgbSignature, OneKey cnKey, Provider provider) throws CoseException {
         AlgorithmID alg = AlgorithmID.FromCBOR(findAttribute(HeaderKeys.Algorithm));
-        return validateSignature(alg, rgbToBeSigned, rgbSignature, cnKey);
+        return validateSignature(alg, rgbToBeSigned, rgbSignature, cnKey, provider);
     }
 
-    static boolean validateSignature(AlgorithmID alg, byte[] rgbToBeSigned, byte[] rgbSignature, OneKey cnKey) throws CoseException {
+    static boolean validateSignature(AlgorithmID alg, byte[] rgbToBeSigned, byte[] rgbSignature, OneKey cnKey, Provider provider) throws CoseException {
         String algName = null;
-        String provider = null;
         boolean convert = false;
 
         switch (alg) {
@@ -190,7 +185,7 @@ public abstract class SignCommon extends Message {
 
         boolean result = false;
         try {
-            Signature sig = provider == null ? Signature.getInstance(algName, "BC") :
+            Signature sig = provider == null ? Signature.getInstance(algName) :
                     Signature.getInstance(algName, provider);
             sig.initVerify(pubKey);
             sig.update(rgbToBeSigned);
