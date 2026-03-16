@@ -26,14 +26,13 @@ import java.util.Arrays;
 /**
  * @author jimsch
  */
-public class OneKey {
+public class OneKey extends CryptoContext {
 
     protected CBORObject keyMap;
     private PrivateKey privateKey;
     private PublicKey publicKey;
 
     private final KeyFactory keyFactory;
-    private final CryptoContext cryptoContext = new CryptoContext();
 
     public OneKey() {
         keyFactory = createKeyFactory("EC");
@@ -1101,17 +1100,10 @@ public class OneKey {
         }
     }
 
-    /**
-     * Gets the {@link CryptoContext} to set a different JCA Provider
-     */
-    public CryptoContext getCryptoContext() {
-        return cryptoContext;
-    }
-
     private KeyFactory createKeyFactory(String algorithm) {
         final KeyFactory keyFactory;
         try {
-            keyFactory = cryptoContext.getProvider() != null ? KeyFactory.getInstance(algorithm, cryptoContext.getProvider()) : KeyFactory.getInstance(algorithm);
+            keyFactory = getProvider() != null ? KeyFactory.getInstance(algorithm, getProvider()) : KeyFactory.getInstance(algorithm);
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("Unsupported Algorithm: " + e.getMessage(), e);
         }

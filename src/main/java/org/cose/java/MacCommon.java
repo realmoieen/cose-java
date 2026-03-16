@@ -122,7 +122,7 @@ public abstract class MacCommon extends Message {
         byte[] IV = new byte[128 / 8];
 
         try {
-            Cipher cbcmac = getCryptoContext().getProvider() != null ? Cipher.getInstance("AES/CBC/NoPadding", getCryptoContext().getProvider()) : Cipher.getInstance("AES/CBC/NoPadding");
+            Cipher cbcmac = getProvider() != null ? Cipher.getInstance("AES/CBC/NoPadding", getProvider()) : Cipher.getInstance("AES/CBC/NoPadding");
             cbcmac.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(rgbKey, "AES"),
                         new IvParameterSpec(IV));
             byte[] val = BuildContentBytes();
@@ -182,7 +182,7 @@ public abstract class MacCommon extends Message {
         if (rgbKey.length != alg.getKeySize()/8) throw new CoseException("Key is incorrect size");
         
         try {
-            Mac hmac = getCryptoContext().getProvider() != null ? Mac.getInstance(algStr, getCryptoContext().getProvider()) : Mac.getInstance(algStr);
+            Mac hmac = getProvider() != null ? Mac.getInstance(algStr, getProvider()) : Mac.getInstance(algStr);
             hmac.init(new SecretKeySpec(rgbKey, algStr));
             byte[] val = BuildContentBytes();
             val = hmac.doFinal(val);
